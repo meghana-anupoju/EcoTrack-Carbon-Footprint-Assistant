@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="EcoTrack - Your personal carbon footprint assistant to help you understand, track, and reduce your carbon footprint." />
+    <title>EcoTrack - Carbon Footprint Assistant</title>
+    <!-- Google Fonts for Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="app">
+      <header class="glass-panel">
+        <div class="logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21C12 21 21 16 21 9C21 5.5 17.5 2 12 2C6.5 2 3 5.5 3 9C3 16 12 21 12 21Z" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 21C12 21 12 11 12 11" stroke="url(#paint1_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="paint0_linear" x1="12" y1="2" x2="12" y2="21" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#2DED84"/>
+                <stop offset="1" stop-color="#02C39A"/>
+              </linearGradient>
+              <linearGradient id="paint1_linear" x1="12" y1="11" x2="12" y2="21" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#2DED84"/>
+                <stop offset="1" stop-color="#02C39A"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <h1>EcoTrack</h1>
+        </div>
+        <nav>
+          <a href="#dashboard" class="active">Dashboard</a>
+          <a href="#log">Log Activity</a>
+        </nav>
+      </header>
+
+      <main>
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="view-section active">
+          <div class="score-card glass-panel">
+            <h2>Your Carbon Footprint</h2>
+            <div class="score-display">
+              <span id="total-score">0.0</span>
+              <span class="unit">kg CO₂</span>
+            </div>
+            <p id="score-status" class="status-text">Log your activities to see your footprint!</p>
+          </div>
+
+          <div class="insights-container">
+            <div class="glass-panel insight-card">
+              <h3>Smart Insights</h3>
+              <ul id="insights-list">
+                <li>Start logging activities to receive personalized recommendations.</li>
+              </ul>
+            </div>
+            <div class="glass-panel chart-card">
+              <h3>Breakdown</h3>
+              <div class="progress-bar-container">
+                <label for="transport-bar">Transport</label>
+                <div class="progress-bg"><div class="progress-fill" id="transport-bar" style="width: 0%"></div></div>
+              </div>
+              <div class="progress-bar-container">
+                <label for="diet-bar">Diet</label>
+                <div class="progress-bg"><div class="progress-fill" id="diet-bar" style="width: 0%"></div></div>
+              </div>
+              <div class="progress-bar-container">
+                <label for="energy-bar">Energy</label>
+                <div class="progress-bg"><div class="progress-fill" id="energy-bar" style="width: 0%"></div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Log Activity Section -->
+        <section id="log" class="view-section" style="display: none;">
+          <div class="glass-panel form-container">
+            <h2>Log Your Daily Impact</h2>
+            <form id="activity-form">
+              <div class="form-group">
+                <label for="transport">Transportation (km traveled today)</label>
+                <div class="input-wrapper">
+                  <select id="transport-mode" aria-label="Transport Mode">
+                    <option value="car">Car (Gasoline)</option>
+                    <option value="ev">Electric Vehicle</option>
+                    <option value="public">Public Transit</option>
+                    <option value="bike">Bicycle / Walk</option>
+                  </select>
+                  <input type="number" id="transport-dist" min="0" step="0.1" placeholder="Distance in km" required aria-label="Distance in kilometers">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="diet">Diet Type</label>
+                <select id="diet" required aria-label="Diet type">
+                  <option value="meat-heavy">Meat Heavy</option>
+                  <option value="average">Average (Mixed)</option>
+                  <option value="vegetarian">Vegetarian</option>
+                  <option value="vegan">Vegan</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="energy">Home Energy Usage (kWh used today)</label>
+                <input type="number" id="energy" min="0" step="0.1" placeholder="e.g., 10 kWh" aria-label="Energy usage in kWh" required>
+              </div>
+
+              <button type="submit" class="primary-btn">Calculate & Save</button>
+            </form>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
