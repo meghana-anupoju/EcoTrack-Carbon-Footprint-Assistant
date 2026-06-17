@@ -5,6 +5,8 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="EcoTrack - Your personal carbon footprint assistant to help you understand, track, and reduce your carbon footprint." />
+    <!-- Content Security Policy for Enterprise-grade security -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:;">
     <title>EcoTrack - Carbon Footprint Assistant</title>
     <!-- Google Fonts for Modern Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,9 +15,9 @@
   </head>
   <body>
     <div id="app">
-      <header class="glass-panel">
+      <header class="glass-panel" role="banner">
         <div class="logo">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M12 21C12 21 21 16 21 9C21 5.5 17.5 2 12 2C6.5 2 3 5.5 3 9C3 16 12 21 12 21Z" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M12 21C12 21 12 11 12 11" stroke="url(#paint1_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <defs>
@@ -31,32 +33,32 @@
           </svg>
           <h1>EcoTrack</h1>
         </div>
-        <nav>
+        <nav role="navigation" aria-label="Main Navigation">
           <a href="#dashboard" class="active">Dashboard</a>
           <a href="#log">Log Activity</a>
         </nav>
       </header>
 
-      <main>
+      <main role="main">
         <!-- Dashboard Section -->
-        <section id="dashboard" class="view-section active">
-          <div class="score-card glass-panel">
-            <h2>Your Carbon Footprint</h2>
+        <section id="dashboard" class="view-section active" aria-labelledby="dashboard-heading">
+          <div class="score-card glass-panel" aria-live="polite">
+            <h2 id="dashboard-heading">Your Carbon Footprint</h2>
             <div class="score-display">
-              <span id="total-score">0.0</span>
-              <span class="unit">kg CO₂</span>
+              <span id="total-score" aria-label="Total Footprint Score">0.0</span>
+              <span class="unit" aria-hidden="true">kg CO₂</span>
             </div>
             <p id="score-status" class="status-text">Log your activities to see your footprint!</p>
           </div>
 
           <div class="insights-container">
-            <div class="glass-panel insight-card">
+            <div class="glass-panel insight-card" aria-live="polite">
               <h3>Smart Insights</h3>
               <ul id="insights-list">
                 <li>Start logging activities to receive personalized recommendations.</li>
               </ul>
             </div>
-            <div class="glass-panel chart-card">
+            <div class="glass-panel chart-card" aria-hidden="true">
               <h3>Breakdown</h3>
               <div class="progress-bar-container">
                 <label for="transport-bar">Transport</label>
@@ -75,26 +77,26 @@
         </section>
 
         <!-- Log Activity Section -->
-        <section id="log" class="view-section" style="display: none;">
+        <section id="log" class="view-section" style="display: none;" aria-labelledby="log-heading">
           <div class="glass-panel form-container">
-            <h2>Log Your Daily Impact</h2>
+            <h2 id="log-heading">Log Your Daily Impact</h2>
             <form id="activity-form">
               <div class="form-group">
-                <label for="transport">Transportation (km traveled today)</label>
+                <label for="transport-mode">Transportation Mode</label>
                 <div class="input-wrapper">
-                  <select id="transport-mode" aria-label="Transport Mode">
+                  <select id="transport-mode" aria-label="Select Transport Mode">
                     <option value="car">Car (Gasoline)</option>
                     <option value="ev">Electric Vehicle</option>
                     <option value="public">Public Transit</option>
                     <option value="bike">Bicycle / Walk</option>
                   </select>
-                  <input type="number" id="transport-dist" min="0" step="0.1" placeholder="Distance in km" required aria-label="Distance in kilometers">
+                  <input type="number" id="transport-dist" min="0" step="0.1" placeholder="Distance in km" required aria-label="Distance traveled in kilometers">
                 </div>
               </div>
 
               <div class="form-group">
                 <label for="diet">Diet Type</label>
-                <select id="diet" required aria-label="Diet type">
+                <select id="diet" required aria-label="Select Diet Type">
                   <option value="meat-heavy">Meat Heavy</option>
                   <option value="average">Average (Mixed)</option>
                   <option value="vegetarian">Vegetarian</option>
@@ -103,8 +105,8 @@
               </div>
 
               <div class="form-group">
-                <label for="energy">Home Energy Usage (kWh used today)</label>
-                <input type="number" id="energy" min="0" step="0.1" placeholder="e.g., 10 kWh" aria-label="Energy usage in kWh" required>
+                <label for="energy">Home Energy Usage (kWh)</label>
+                <input type="number" id="energy" min="0" step="0.1" placeholder="e.g., 10 kWh" aria-label="Energy usage in kilowatt hours" required>
               </div>
 
               <button type="submit" class="primary-btn">Calculate & Save</button>

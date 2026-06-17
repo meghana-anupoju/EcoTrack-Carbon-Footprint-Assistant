@@ -1,15 +1,9 @@
 import './style.css';
+import { calculateEmissions } from './src/logic/calculator.js';
+import { generateInsights } from './src/logic/insights.js';
+import { saveToHistory, getHistory, getLatestRecord } from './src/utils/storage.js';
 
-// State Management
-let footprintData = {
-  transport: 0,
-  diet: 0,
-  energy: 0,
-  total: 0,
-  history: []
-};
-
-// DOM Elements
+// --- DOM Elements ---
 const app = document.getElementById('app');
 const navLinks = document.querySelectorAll('nav a');
 const views = document.querySelectorAll('.view-section');
@@ -22,7 +16,7 @@ const transportBar = document.getElementById('transport-bar');
 const dietBar = document.getElementById('diet-bar');
 const energyBar = document.getElementById('energy-bar');
 
-// Navigation Logic
+// --- Navigation Logic ---
 navLinks.forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
@@ -45,49 +39,21 @@ navLinks.forEach(link => {
   });
 });
 
-// Emission Factors (kg CO2 per unit)
-const EMISSION_FACTORS = {
-  transport: {
-    car: 0.192, // per km
-    ev: 0.05, // per km (varies by grid)
-    public: 0.04, // per km
-    bike: 0 // per km
-  },
-  diet: {
-    'meat-heavy': 3.3, // per day
-    'average': 2.5, // per day
-    'vegetarian': 1.7, // per day
-    'vegan': 1.5 // per day
-  },
-  energy: 0.385 // per kWh (average global grid)
-};
-
-// Handle Form Submission
+// --- Handle Form Submission ---
 activityForm.addEventListener('submit', (e) => {
   e.preventDefault();
   
   // Get Values
   const transportMode = document.getElementById('transport-mode').value;
-  const transportDist = parseFloat(document.getElementById('transport-dist').value) || 0;
+  const transportDist = document.getElementById('transport-dist').value;
   const dietType = document.getElementById('diet').value;
-  const energyUsage = parseFloat(document.getElementById('energy').value) || 0;
+  const energyUsage = document.getElementById('energy').value;
   
   // Calculate Emissions
-  const transportEmissions = transportDist * EMISSION_FACTORS.transport[transportMode];
-  const dietEmissions = EMISSION_FACTORS.diet[dietType];
-  const energyEmissions = energyUsage * EMISSION_FACTORS.energy;
+  const footprintData = calculateEmissions(transportMode, transportDist, dietType, energyUsage);
   
-  // Update State
-  footprintData.transport = transportEmissions;
-  footprintData.diet = dietEmissions;
-  footprintData.energy = energyEmissions;
-  footprintData.total = transportEmissions + dietEmissions + energyEmissions;
-  
-  // Save to History (Mock backend behavior)
-  footprintData.history.push({
-    date: new Date().toISOString(),
-    ...footprintData
-  });
+  // Save to History (LocalStorage)
+  saveToHistory(footprintData);
   
   // Update UI
   updateDashboard();
@@ -99,77 +65,61 @@ activityForm.addEventListener('submit', (e) => {
   activityForm.reset();
 });
 
-// Smart Insights Engine
-function generateInsights() {
-  const insights = [];
-  
-  // Transport Insights
-  if (footprintData.transport > 5) {
-    insights.push("Your transport emissions are high. Consider carpooling, using public transit, or switching to an EV.");
-  } else if (footprintData.transport > 0) {
-    insights.push("Great job keeping transport emissions moderate! Could you swap one car trip for a bike ride this week?");
-  }
-  
-  // Diet Insights
-  if (footprintData.diet > 2.5) {
-    insights.push("Meat-heavy diets significantly increase your footprint. Try a 'Meatless Monday' to reduce your impact.");
-  } else if (footprintData.diet < 2) {
-    insights.push("Your plant-based diet is a major contributor to keeping your footprint low. Keep it up!");
-  }
-  
-  // Energy Insights
-  if (footprintData.energy > 5) {
-    insights.push("Home energy use is elevated. Simple actions like unplugging idle devices and switching to LED bulbs can help.");
-  }
-  
-  // Generic / Praise
-  if (footprintData.total < 8 && footprintData.total > 0) {
-    insights.push("You are doing exceptionally well! Your daily footprint is below average.");
-  }
-  
-  if (insights.length === 0) {
-    insights.push("Start logging activities to receive personalized recommendations.");
-  }
-  
-  return insights;
-}
-
-// Update Dashboard UI
+// --- Update Dashboard UI ---
 function updateDashboard() {
+  const currentData = getLatestRecord() || { transport: 0, diet: 0, energy: 0, total: 0 };
+  const history = getHistory();
+
   // Animate Total Score
-  animateValue(totalScoreEl, parseFloat(totalScoreEl.innerText), footprintData.total, 1000);
+  animateValue(totalScoreEl, parseFloat(totalScoreEl.innerText) || 0, currentData.total, 1000);
   
   // Update Status Text
   const statusEl = document.getElementById('score-status');
-  if (footprintData.total < 8) {
-    statusEl.innerText = "Excellent! You have a low carbon footprint today.";
+  if (currentData.total === 0) {
+    statusEl.textContent = "Log your activities to see your footprint!";
+    statusEl.style.color = "var(--text-secondary)";
+  } else if (currentData.total < 8) {
+    statusEl.textContent = "Excellent! You have a low carbon footprint today.";
     statusEl.style.color = "var(--success)";
-  } else if (footprintData.total < 15) {
-    statusEl.innerText = "Average footprint. There's room for improvement.";
+  } else if (currentData.total < 15) {
+    statusEl.textContent = "Average footprint. There's room for improvement.";
     statusEl.style.color = "var(--warning)";
   } else {
-    statusEl.innerText = "High footprint. Check insights for ways to reduce it.";
+    statusEl.textContent = "High footprint. Check insights for ways to reduce it.";
     statusEl.style.color = "var(--danger)";
   }
   
   // Update Progress Bars (Relative to an arbitrary "max" for visual scaling)
   const MAX_EXPECTED = 15;
-  transportBar.style.width = `${Math.min((footprintData.transport / MAX_EXPECTED) * 100, 100)}%`;
-  dietBar.style.width = `${Math.min((footprintData.diet / MAX_EXPECTED) * 100, 100)}%`;
-  energyBar.style.width = `${Math.min((footprintData.energy / MAX_EXPECTED) * 100, 100)}%`;
+  transportBar.style.width = `${Math.min((currentData.transport / MAX_EXPECTED) * 100, 100)}%`;
+  dietBar.style.width = `${Math.min((currentData.diet / MAX_EXPECTED) * 100, 100)}%`;
+  energyBar.style.width = `${Math.min((currentData.energy / MAX_EXPECTED) * 100, 100)}%`;
   
-  // Update Insights
-  const insights = generateInsights();
-  insightsList.innerHTML = insights.map(insight => `<li>${insight}</li>`).join('');
+  // Update Insights safely using DocumentFragment and textContent to prevent XSS
+  const insights = generateInsights(currentData, history);
+  
+  // Clear previous list safely
+  while (insightsList.firstChild) {
+    insightsList.removeChild(insightsList.firstChild);
+  }
+  
+  const fragment = document.createDocumentFragment();
+  insights.forEach(insightText => {
+    const li = document.createElement('li');
+    li.textContent = insightText;
+    fragment.appendChild(li);
+  });
+  
+  insightsList.appendChild(fragment);
 }
 
-// Helper: Animate Number Counter
+// --- Helper: Animate Number Counter ---
 function animateValue(obj, start, end, duration) {
   let startTimestamp = null;
   const step = (timestamp) => {
     if (!startTimestamp) startTimestamp = timestamp;
     const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-    obj.innerHTML = (progress * (end - start) + start).toFixed(1);
+    obj.textContent = (progress * (end - start) + start).toFixed(1);
     if (progress < 1) {
       window.requestAnimationFrame(step);
     }
@@ -177,5 +127,5 @@ function animateValue(obj, start, end, duration) {
   window.requestAnimationFrame(step);
 }
 
-// Initialize
-updateDashboard();
+// Initialize on load
+document.addEventListener('DOMContentLoaded', updateDashboard);
