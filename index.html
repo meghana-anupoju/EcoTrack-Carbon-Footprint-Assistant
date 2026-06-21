@@ -44,6 +44,11 @@
         <section id="dashboard" class="view-section active" aria-labelledby="dashboard-heading">
           <div class="score-card glass-panel" aria-live="polite">
             <h2 id="dashboard-heading">Your Carbon Footprint</h2>
+            
+            <div class="goal-tracker" aria-live="polite">
+              Target Goal: <span>< 8 kg CO₂</span>
+            </div>
+
             <div class="score-display">
               <span id="total-score" aria-label="Total Footprint Score">0.0</span>
               <span class="unit" aria-hidden="true">kg CO₂</span>
@@ -57,19 +62,20 @@
               <ul id="insights-list">
                 <li>Start logging activities to receive personalized recommendations.</li>
               </ul>
+              <button id="clear-history-btn" class="secondary-btn" aria-label="Clear historical data">Clear History</button>
             </div>
             <div class="glass-panel chart-card" aria-hidden="true">
               <h3>Breakdown</h3>
               <div class="progress-bar-container">
-                <label for="transport-bar">Transport</label>
+                <label id="transport-label">Transport</label>
                 <div class="progress-bg"><div class="progress-fill" id="transport-bar" style="width: 0%"></div></div>
               </div>
               <div class="progress-bar-container">
-                <label for="diet-bar">Diet</label>
+                <label id="diet-label">Diet</label>
                 <div class="progress-bg"><div class="progress-fill" id="diet-bar" style="width: 0%"></div></div>
               </div>
               <div class="progress-bar-container">
-                <label for="energy-bar">Energy</label>
+                <label id="energy-label">Energy</label>
                 <div class="progress-bg"><div class="progress-fill" id="energy-bar" style="width: 0%"></div></div>
               </div>
             </div>
@@ -90,6 +96,7 @@
                     <option value="public">Public Transit</option>
                     <option value="bike">Bicycle / Walk</option>
                   </select>
+                  <label for="transport-dist" class="sr-only">Distance in km</label>
                   <input type="number" id="transport-dist" min="0" step="0.1" placeholder="Distance in km" required aria-label="Distance traveled in kilometers">
                 </div>
               </div>

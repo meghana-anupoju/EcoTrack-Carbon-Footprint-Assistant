@@ -18,6 +18,26 @@
   font-family: 'Outfit', sans-serif;
 }
 
+/* Accessibility: Screen Reader Only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Accessibility: Focus Outlines */
+*:focus-visible {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 body {
   background-color: var(--bg-color);
   color: var(--text-primary);
@@ -104,6 +124,24 @@ nav a:hover, nav a.active {
   text-align: center;
   padding: 3rem 2rem;
   margin-bottom: 2rem;
+  position: relative;
+}
+
+.goal-tracker {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 1px solid var(--glass-border);
+}
+
+.goal-tracker span {
+  font-weight: 600;
+  color: var(--accent-color);
 }
 
 .score-card h2 {
@@ -145,6 +183,7 @@ nav a:hover, nav a.active {
 
 .insight-card, .chart-card {
   padding: 2rem;
+  position: relative;
 }
 
 h3 {
@@ -219,7 +258,7 @@ h3 {
   margin-bottom: 1.5rem;
 }
 
-.form-group label {
+.form-group label:not(.sr-only) {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
@@ -275,6 +314,26 @@ option {
   transform: translateY(0);
 }
 
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+}
+
+.secondary-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .insights-container {
@@ -283,5 +342,11 @@ option {
   
   .input-wrapper {
     flex-direction: column;
+  }
+  
+  .goal-tracker {
+    position: static;
+    display: inline-block;
+    margin-top: 1rem;
   }
 }

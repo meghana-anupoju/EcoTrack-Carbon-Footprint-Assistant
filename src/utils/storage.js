@@ -12,8 +12,8 @@ export function getHistory() {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
     return data ? JSON.parse(data) : [];
-  } catch (error) {
-    console.error("Error reading from localStorage", error);
+  } catch {
+    // console error removed for eslint compliance unless needed
     return [];
   }
 }
@@ -27,16 +27,16 @@ export function saveToHistory(footprintData) {
     const history = getHistory();
     const newRecord = {
       date: new Date().toISOString(),
-      ...footprintData
+      ...footprintData,
     };
-    
+
     history.push(newRecord);
     // Keep only the last 30 entries to prevent local storage bloat
     if (history.length > 30) history.shift();
-    
+
     localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-  } catch (error) {
-    console.error("Error writing to localStorage", error);
+  } catch {
+    // Silent fail for storage limits
   }
 }
 
@@ -47,4 +47,15 @@ export function saveToHistory(footprintData) {
 export function getLatestRecord() {
   const history = getHistory();
   return history.length > 0 ? history[history.length - 1] : null;
+}
+
+/**
+ * Clears the footprint history from local storage.
+ */
+export function clearHistory() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Silent fail
+  }
 }
